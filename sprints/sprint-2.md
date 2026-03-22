@@ -102,3 +102,7 @@ Theme: **Why could we extend the CRM model without breaking Sprint 1 clients or 
 **Nice next PINs:** OpenAPI request/response **examples** matching README; list pagination; coerce-or-document policy if third-party clients send free-form interaction labels; Docker or deploy recipe for demos.
 
 **Tooling:** Retro artifacts live under `pinion/pinion/sprints/artifacts/sprint-2/` (path as recorded by Pinion from the application repo root). Keep sprint markdown, metrics, and git log references consistent with that tree when reporting.
+
+### Sprint 2 End Dashboard
+
+![Sprint 2 End Dashoard](readme-images/sprint-2-end-dashboard.png)
