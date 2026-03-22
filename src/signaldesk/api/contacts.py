@@ -150,7 +150,12 @@ async def create_note(
     session: AsyncSession = Depends(get_async_session),
 ) -> Note:
     await _get_owned_contact_or_404(contact_id, current_user, session)
-    note = Note(contact_id=contact_id, body=body.body)
+    note = Note(
+        contact_id=contact_id,
+        body=body.body,
+        interaction_type=body.interaction_type,
+        occurred_at=body.occurred_at,
+    )
     session.add(note)
     await session.commit()
     await session.refresh(note)
@@ -176,8 +181,14 @@ async def update_note(
     session: AsyncSession = Depends(get_async_session),
 ) -> Note:
     note = await _get_owned_note_or_404(contact_id, note_id, current_user, session)
-    if body.body is not None:
-        note.body = body.body
+    update = body.model_dump(exclude_unset=True)
+    if "body" in update and update["body"] is None:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail="body cannot be set to null",
+        )
+    for key, value in update.items():
+        setattr(note, key, value)
     await session.commit()
     await session.refresh(note)
     return note
