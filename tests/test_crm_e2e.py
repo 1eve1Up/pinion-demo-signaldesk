@@ -3,8 +3,10 @@
 ``test_crm_happy_path_full_story`` walks the intended product slice:
 
 1. Register a user and obtain a JWT (bearer).
-2. Create two contacts, list them, fetch one by id, rename it with PATCH.
-3. On one contact, create two notes, list them, GET one, PATCH one, DELETE one.
+2. Create two contacts (with optional CRM fields), list them, fetch one by id,
+   enrich with PATCH.
+3. On one contact, create two notes (interaction_type + occurred_at), list them,
+   GET one, PATCH one, DELETE one.
 4. DELETE the contact (child notes are removed via cascade).
 5. Log in with the same email/password and verify the contact list is empty.
 
@@ -29,11 +31,25 @@ def test_crm_happy_path_full_story(auth_client: TestClient) -> None:
     token = reg.json()["access_token"]
     h = _bearer(token)
 
-    c1 = auth_client.post("/contacts", headers=h, json={"name": "Northwind"})
-    c2 = auth_client.post("/contacts", headers=h, json={"name": "Contoso"})
+    c1 = auth_client.post(
+        "/contacts",
+        headers=h,
+        json={
+            "name": "Northwind",
+            "email": "buyer@northwind.example",
+            "company": "Northwind Traders",
+        },
+    )
+    c2 = auth_client.post(
+        "/contacts",
+        headers=h,
+        json={"name": "Contoso", "phone": "+1 555 0199"},
+    )
     assert c1.status_code == 201
     assert c2.status_code == 201
     id1, id2 = c1.json()["id"], c2.json()["id"]
+    assert c1.json()["email"] == "buyer@northwind.example"
+    assert c2.json()["phone"] == "+1 555 0199"
 
     listed = auth_client.get("/contacts", headers=h)
     assert listed.status_code == 200
@@ -44,16 +60,32 @@ def test_crm_happy_path_full_story(auth_client: TestClient) -> None:
     assert one.json()["name"] == "Northwind"
 
     patched = auth_client.patch(
-        f"/contacts/{id1}", headers=h, json={"name": "Northwind Ltd"}
+        f"/contacts/{id1}",
+        headers=h,
+        json={"name": "Northwind Ltd", "phone": "+1 555 0100"},
     )
     assert patched.status_code == 200
-    assert patched.json()["name"] == "Northwind Ltd"
+    pj = patched.json()
+    assert pj["name"] == "Northwind Ltd"
+    assert pj["phone"] == "+1 555 0100"
 
     n_a = auth_client.post(
-        f"/contacts/{id1}/notes", headers=h, json={"body": "Called - interested"}
+        f"/contacts/{id1}/notes",
+        headers=h,
+        json={
+            "body": "Called - interested",
+            "interaction_type": "call",
+            "occurred_at": "2026-03-18T14:00:00+00:00",
+        },
     )
     n_b = auth_client.post(
-        f"/contacts/{id1}/notes", headers=h, json={"body": "Sent follow-up deck"}
+        f"/contacts/{id1}/notes",
+        headers=h,
+        json={
+            "body": "Sent follow-up deck",
+            "interaction_type": "follow_up",
+            "occurred_at": "2026-03-19T09:15:00+00:00",
+        },
     )
     assert n_a.status_code == 201
     assert n_b.status_code == 201
@@ -65,7 +97,10 @@ def test_crm_happy_path_full_story(auth_client: TestClient) -> None:
 
     g = auth_client.get(f"/contacts/{id1}/notes/{na_id}", headers=h)
     assert g.status_code == 200
-    assert "interested" in g.json()["body"]
+    gj = g.json()
+    assert "interested" in gj["body"]
+    assert gj["interaction_type"] == "call"
+    assert gj["occurred_at"] is not None
 
     upd = auth_client.patch(
         f"/contacts/{id1}/notes/{na_id}",
