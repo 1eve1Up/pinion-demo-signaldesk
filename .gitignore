@@ -2,6 +2,7 @@
 pinion/
 
 # Python / SignalDesk app
+.env
 __pycache__/
 *.py[cod]
 .pytest_cache/
