@@ -1,0 +1,75 @@
+{
+  "sprint_id": "sprint-2",
+  "closed_at": "2026-03-22T21:08:13Z",
+  "totals": {
+    "lines_added": 1808,
+    "net_lines": 1722,
+    "estimated_tokens": 1209
+  },
+  "units": [
+    {
+      "id": "PIN-018",
+      "lines_added": 391,
+      "net_lines": 369,
+      "estimated_tokens": 145,
+      "recorded_at": "2026-03-22T21:05:46Z"
+    },
+    {
+      "id": "PIN-017",
+      "lines_added": 370,
+      "net_lines": 348,
+      "estimated_tokens": 160,
+      "recorded_at": "2026-03-22T21:04:51Z"
+    },
+    {
+      "id": "PIN-016",
+      "lines_added": 359,
+      "net_lines": 341,
+      "estimated_tokens": 131,
+      "recorded_at": "2026-03-22T21:03:30Z"
+    },
+    {
+      "id": "PIN-015",
+      "lines_added": 315,
+      "net_lines": 306,
+      "estimated_tokens": 142,
+      "recorded_at": "2026-03-22T21:02:28Z"
+    },
+    {
+      "id": "PIN-014",
+      "lines_added": 144,
+      "net_lines": 135,
+      "estimated_tokens": 166,
+      "recorded_at": "2026-03-22T21:01:10Z"
+    },
+    {
+      "id": "PIN-013",
+      "lines_added": 106,
+      "net_lines": 101,
+      "estimated_tokens": 159,
+      "recorded_at": "2026-03-22T21:00:09Z"
+    },
+    {
+      "id": "PIN-012",
+      "lines_added": 81,
+      "net_lines": 80,
+      "estimated_tokens": 145,
+      "recorded_at": "2026-03-22T20:59:03Z"
+    },
+    {
+      "id": "PIN-011",
+      "lines_added": 42,
+      "net_lines": 42,
+      "estimated_tokens": 161,
+      "recorded_at": "2026-03-22T20:57:38Z"
+    }
+  ],
+  "artifacts": {
+    "bundle": "pinion/sprints/artifacts/sprint-2/",
+    "task_md": "pinion/sprints/artifacts/sprint-2/task.md",
+    "execution_log_md": "pinion/sprints/artifacts/sprint-2/execution_log.md",
+    "metrics_json": "pinion/sprints/artifacts/sprint-2/metrics.json",
+    "commits_dir": "pinion/sprints/artifacts/sprint-2/commits/",
+    "commits_git_log": "pinion/sprints/artifacts/sprint-2/commits/git-log.txt"
+  }
+}
