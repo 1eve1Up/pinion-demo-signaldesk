@@ -1,0 +1,101 @@
+from fastapi.testclient import TestClient
+
+
+def _register_token(client: TestClient, email: str, password: str) -> str:
+    r = client.post("/auth/register", json={"email": email, "password": password})
+    assert r.status_code == 201
+    return r.json()["access_token"]
+
+
+def _bearer(token: str) -> dict[str, str]:
+    return {"Authorization": f"Bearer {token}"}
+
+
+def test_notes_crud_on_owned_contact(auth_client: TestClient) -> None:
+    token = _register_token(auth_client, "owner@example.com", "secret123")
+    h = _bearer(token)
+    c = auth_client.post("/contacts", headers=h, json={"name": "Acme"})
+    assert c.status_code == 201
+    cid = c.json()["id"]
+
+    listed = auth_client.get(f"/contacts/{cid}/notes", headers=h)
+    assert listed.status_code == 200
+    assert listed.json() == []
+
+    assert (
+        auth_client.post(f"/contacts/{cid}/notes", json={"body": "x"}).status_code
+        == 401
+    )
+
+    created = auth_client.post(
+        f"/contacts/{cid}/notes", headers=h, json={"body": "First touch"}
+    )
+    assert created.status_code == 201
+    row = created.json()
+    nid = row["id"]
+    assert row["contact_id"] == cid
+    assert row["body"] == "First touch"
+
+    listed2 = auth_client.get(f"/contacts/{cid}/notes", headers=h)
+    assert listed2.status_code == 200
+    assert len(listed2.json()) == 1
+
+    one = auth_client.get(f"/contacts/{cid}/notes/{nid}", headers=h)
+    assert one.status_code == 200
+    assert one.json()["body"] == "First touch"
+
+    patched = auth_client.patch(
+        f"/contacts/{cid}/notes/{nid}", headers=h, json={"body": "Updated"}
+    )
+    assert patched.status_code == 200
+    assert patched.json()["body"] == "Updated"
+
+    deleted = auth_client.delete(f"/contacts/{cid}/notes/{nid}", headers=h)
+    assert deleted.status_code == 204
+
+    missing = auth_client.get(f"/contacts/{cid}/notes/{nid}", headers=h)
+    assert missing.status_code == 404
+
+
+def test_notes_on_other_users_contact_return_404(auth_client: TestClient) -> None:
+    ta = _register_token(auth_client, "alice@example.com", "a")
+    tb = _register_token(auth_client, "bob@example.com", "b")
+    c = auth_client.post(
+        "/contacts",
+        headers=_bearer(ta),
+        json={"name": "Alice only"},
+    )
+    assert c.status_code == 201
+    cid = c.json()["id"]
+    n = auth_client.post(
+        f"/contacts/{cid}/notes",
+        headers=_bearer(ta),
+        json={"body": "secret"},
+    )
+    assert n.status_code == 201
+    nid = n.json()["id"]
+
+    hb = _bearer(tb)
+    assert auth_client.get(f"/contacts/{cid}/notes", headers=hb).status_code == 404
+    assert (
+        auth_client.post(
+            f"/contacts/{cid}/notes", headers=hb, json={"body": "nope"}
+        ).status_code
+        == 404
+    )
+    assert (
+        auth_client.get(f"/contacts/{cid}/notes/{nid}", headers=hb).status_code == 404
+    )
+    assert (
+        auth_client.patch(
+            f"/contacts/{cid}/notes/{nid}", headers=hb, json={"body": "hack"}
+        ).status_code
+        == 404
+    )
+    assert (
+        auth_client.delete(f"/contacts/{cid}/notes/{nid}", headers=hb).status_code
+        == 404
+    )
+
+    still = auth_client.get(f"/contacts/{cid}/notes/{nid}", headers=_bearer(ta))
+    assert still.status_code == 200
