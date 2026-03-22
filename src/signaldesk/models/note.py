@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from datetime import datetime, timezone
 
-from sqlalchemy import DateTime, String
+from sqlalchemy import DateTime, ForeignKey, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from signaldesk.db.base import Base
@@ -12,12 +12,15 @@ def _utc_now() -> datetime:
     return datetime.now(timezone.utc)
 
 
-class User(Base):
-    __tablename__ = "users"
+class Note(Base):
+    __tablename__ = "notes"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    email: Mapped[str] = mapped_column(String(255), unique=True, index=True)
-    hashed_password: Mapped[str] = mapped_column(String(255))
+    contact_id: Mapped[int] = mapped_column(
+        ForeignKey("contacts.id", ondelete="CASCADE"),
+        index=True,
+    )
+    body: Mapped[str] = mapped_column(Text())
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         default=_utc_now,
@@ -28,8 +31,4 @@ class User(Base):
         onupdate=_utc_now,
     )
 
-    contacts: Mapped[list["Contact"]] = relationship(
-        "Contact",
-        back_populates="owner",
-        cascade="all, delete-orphan",
-    )
+    contact: Mapped["Contact"] = relationship("Contact", back_populates="notes")

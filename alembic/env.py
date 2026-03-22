@@ -9,7 +9,7 @@ from sqlalchemy.ext.asyncio import async_engine_from_config
 from alembic import context
 
 from signaldesk.db.base import Base
-from signaldesk.models import User  # noqa: F401
+from signaldesk.models import Contact, Note, User  # noqa: F401
 from signaldesk.settings import get_settings
 
 config = context.config
