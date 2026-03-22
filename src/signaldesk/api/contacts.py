@@ -71,7 +71,13 @@ async def create_contact(
     current_user: User = Depends(get_current_user),
     session: AsyncSession = Depends(get_async_session),
 ) -> Contact:
-    contact = Contact(owner_id=current_user.id, name=body.name)
+    contact = Contact(
+        owner_id=current_user.id,
+        name=body.name,
+        email=body.email,
+        phone=body.phone,
+        company=body.company,
+    )
     session.add(contact)
     await session.commit()
     await session.refresh(contact)
@@ -95,8 +101,14 @@ async def update_contact(
     session: AsyncSession = Depends(get_async_session),
 ) -> Contact:
     contact = await _get_owned_contact_or_404(contact_id, current_user, session)
-    if body.name is not None:
-        contact.name = body.name
+    update = body.model_dump(exclude_unset=True)
+    if "name" in update and update["name"] is None:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail="name cannot be set to null",
+        )
+    for key, value in update.items():
+        setattr(contact, key, value)
     await session.commit()
     await session.refresh(contact)
     return contact
