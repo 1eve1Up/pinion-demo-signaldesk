@@ -112,3 +112,7 @@ curl -sS "$BASE/contacts/$CONTACT_ID/notes" -H "Authorization: Bearer $TOKEN"
 ## Pinion (optional)
 
 This repo can carry a `pinion/` subtree for task tracking. See `pinion/AGENTS.md` and run `./bin/pinion` from inside `pinion/` for CLI help.
+
+## Pinion-Built
+
+This repo is built by Level Up's Pinion.
