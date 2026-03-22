@@ -80,3 +80,87 @@ def test_contact_other_user_returns_404(auth_client: TestClient) -> None:
 
     still = auth_client.get(f"/contacts/{cid}", headers=_bearer(ta))
     assert still.status_code == 200
+
+
+def test_contact_create_with_email_phone_company(auth_client: TestClient) -> None:
+    token = _register_token(auth_client, "crm@example.com", "secret123")
+    h = _bearer(token)
+    r = auth_client.post(
+        "/contacts",
+        headers=h,
+        json={
+            "name": "Full Co",
+            "email": "full@example.com",
+            "phone": "+1 555 0100",
+            "company": "Full Co LLC",
+        },
+    )
+    assert r.status_code == 201
+    row = r.json()
+    assert row["name"] == "Full Co"
+    assert row["email"] == "full@example.com"
+    assert row["phone"] == "+1 555 0100"
+    assert row["company"] == "Full Co LLC"
+
+
+def test_contact_patch_clears_optional_fields_with_null(
+    auth_client: TestClient,
+) -> None:
+    token = _register_token(auth_client, "patch@example.com", "secret123")
+    h = _bearer(token)
+    c = auth_client.post(
+        "/contacts",
+        headers=h,
+        json={
+            "name": "Tmp",
+            "email": "tmp@example.com",
+            "company": "Acme",
+        },
+    )
+    assert c.status_code == 201
+    cid = c.json()["id"]
+
+    cleared = auth_client.patch(
+        f"/contacts/{cid}",
+        headers=h,
+        json={"email": None, "company": None},
+    )
+    assert cleared.status_code == 200
+    row = cleared.json()
+    assert row["email"] is None
+    assert row["company"] is None
+    assert row["name"] == "Tmp"
+
+
+def test_contact_invalid_email_returns_422(auth_client: TestClient) -> None:
+    token = _register_token(auth_client, "bad@example.com", "secret123")
+    r = auth_client.post(
+        "/contacts",
+        headers=_bearer(token),
+        json={"name": "X", "email": "not-an-email"},
+    )
+    assert r.status_code == 422
+    assert r.json()["error"] == "validation_error"
+
+
+def test_contact_phone_too_long_returns_422(auth_client: TestClient) -> None:
+    token = _register_token(auth_client, "long@example.com", "secret123")
+    r = auth_client.post(
+        "/contacts",
+        headers=_bearer(token),
+        json={"name": "X", "phone": "x" * 51},
+    )
+    assert r.status_code == 422
+    assert r.json()["error"] == "validation_error"
+
+
+def test_contact_patch_name_null_returns_422(auth_client: TestClient) -> None:
+    token = _register_token(auth_client, "nullname@example.com", "secret123")
+    h = _bearer(token)
+    c = auth_client.post("/contacts", headers=h, json={"name": "Keep"})
+    cid = c.json()["id"]
+    r = auth_client.patch(f"/contacts/{cid}", headers=h, json={"name": None})
+    assert r.status_code == 422
+    body = r.json()
+    assert body["error"] == "validation_error"
+    assert "null" in body["message"].lower()
