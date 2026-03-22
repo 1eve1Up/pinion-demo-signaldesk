@@ -1,0 +1,19 @@
+# git log (Pinion retro)
+
+- max commits: 50
+- range: `HEAD` ancestry (newest first)
+- repo root: `/Users/daniel/Documents/Code/pinion-demos/pinion-demo-signaldesk/pinion`
+
+---
+
+d8a4f0e063299d52ed2ebb66a14f82b3d985eef5 2026-03-22T13:36:20-07:00 docs(signaldesk): README, .env.example, load .env in settings (PIN-010)
+1c382c501dfb812b6f0bab687e0a17069cfbf9b5 2026-03-22T13:33:25-07:00 feat(signaldesk): consistent JSON error envelopes (PIN-009)
+390a9cc0168eaea07d49bc0f03a426569561c617 2026-03-22T13:30:27-07:00 test(signaldesk): CRM e2e story and failure cases (PIN-008)
+63d0d200c0e249f1414c2f38a1204fab71b0663e 2026-03-22T13:27:40-07:00 feat(signaldesk): contact notes CRUD with owner checks (PIN-007)
+6b812c03829b84bfec46fa4ed66c4021fe56dccb 2026-03-22T13:23:01-07:00 feat(signaldesk): bearer-auth contacts CRUD scoped by user (PIN-006)
+09702f2afed73bd03afea1a5a2ddf107a8715fa4 2026-03-22T13:19:15-07:00 feat(signaldesk): POST /auth/register and /auth/login with JWT (PIN-005)
+7a803fe90d1c9e55a00edbed7f8dc2a25173024d 2026-03-22T13:12:24-07:00 feat(signaldesk): bcrypt passwords and JWT helpers with env secret (PIN-004)
+65bb87f5c81cdf2c115b1ecf4fa606dd997770a8 2026-03-22T13:09:27-07:00 feat(signaldesk): Contact and Note models, Alembic migration (PIN-003)
+6933dd87e0601d525e91107116a6c2db3da49058 2026-03-22T10:58:51-07:00 feat(signaldesk): async SQLAlchemy, User model, Alembic migrations (PIN-002)
+06eab93c1d32e919ea60162dee255d36444ff7b0 2026-03-22T10:52:33-07:00 feat(signaldesk): scaffold FastAPI app with /health and pytest (PIN-001)
+bba2537466772df5ca8b7c3337f33d3ff9c00709 2026-03-22T10:50:45-07:00 init
