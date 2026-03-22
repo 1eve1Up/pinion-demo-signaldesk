@@ -1,8 +1,9 @@
 from __future__ import annotations
 
 from datetime import datetime, timezone
+from typing import Optional
 
-from sqlalchemy import DateTime, ForeignKey, Text
+from sqlalchemy import DateTime, ForeignKey, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from signaldesk.db.base import Base
@@ -21,6 +22,10 @@ class Note(Base):
         index=True,
     )
     body: Mapped[str] = mapped_column(Text())
+    interaction_type: Mapped[Optional[str]] = mapped_column(String(32), nullable=True)
+    occurred_at: Mapped[Optional[datetime]] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         default=_utc_now,
