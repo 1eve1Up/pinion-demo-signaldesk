@@ -8,6 +8,7 @@ from sqlalchemy.ext.asyncio import async_sessionmaker
 
 from signaldesk.db.session import dispose_engine, get_engine
 from signaldesk.models import Contact, Note, User
+from signaldesk.security import hash_password, verify_password
 from signaldesk.settings import get_settings
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -41,7 +42,11 @@ def test_user_round_trip_after_migrations(tmp_path, monkeypatch) -> None:
         engine = get_engine()
         factory = async_sessionmaker(engine, expire_on_commit=False)
         async with factory() as session:
-            user = User(email="owner@example.com", hashed_password="not-plaintext")
+            plain = "secret-password"
+            user = User(
+                email="owner@example.com",
+                hashed_password=hash_password(plain),
+            )
             session.add(user)
             await session.commit()
             await session.refresh(user)
@@ -51,7 +56,8 @@ def test_user_round_trip_after_migrations(tmp_path, monkeypatch) -> None:
                 select(User).where(User.email == "owner@example.com")
             )
             found = result.scalar_one()
-            assert found.hashed_password == "not-plaintext"
+            assert found.hashed_password != plain
+            assert verify_password(plain, found.hashed_password)
 
     asyncio.run(_exercise())
     asyncio.run(dispose_engine())
@@ -73,7 +79,10 @@ def test_user_contact_note_chain_after_migrations(tmp_path, monkeypatch) -> None
         engine = get_engine()
         factory = async_sessionmaker(engine, expire_on_commit=False)
         async with factory() as session:
-            user = User(email="crm@example.com", hashed_password="hash")
+            user = User(
+                email="crm@example.com",
+                hashed_password=hash_password("crm-secret"),
+            )
             session.add(user)
             await session.commit()
             await session.refresh(user)
