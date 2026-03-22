@@ -4,6 +4,7 @@ from fastapi import FastAPI
 
 from signaldesk.api.auth import router as auth_router
 from signaldesk.api.contacts import router as contacts_router
+from signaldesk.api.error_handlers import register_error_handlers
 from signaldesk.db import dispose_engine
 
 
@@ -14,6 +15,7 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(title="SignalDesk API", version="0.1.0", lifespan=lifespan)
+register_error_handlers(app)
 app.include_router(auth_router)
 app.include_router(contacts_router)
 
