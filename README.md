@@ -89,22 +89,29 @@ curl -sS -X POST "$BASE/auth/login" \
 ### CRM-style calls (contacts and notes)
 
 ```bash
-# Create a contact (`name` is required)
+# Create a contact (`name` is required; `email`, `phone`, `company` optional)
 curl -sS -X POST "$BASE/contacts" \
   -H "Authorization: Bearer $TOKEN" \
   -H "Content-Type: application/json" \
-  -d '{"name":"Acme Corp"}'
+  -d '{"name":"Acme Corp","email":"crm@acme.example","company":"Acme","phone":"+1 555 0100"}'
 
 # Replace CONTACT_ID with the id from the response
 CONTACT_ID=1
 
 curl -sS "$BASE/contacts/$CONTACT_ID" -H "Authorization: Bearer $TOKEN"
 
-# Add a note (`body` is required)
+# PATCH: update fields; send `null` for email/phone/company to clear optional values
+curl -sS -X PATCH "$BASE/contacts/$CONTACT_ID" \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"phone":"+1 555 0199"}'
+
+# Add a note (`body` is required). Optional: `interaction_type` one of
+# call | meeting | follow_up | other, and `occurred_at` as timezone-aware ISO-8601.
 curl -sS -X POST "$BASE/contacts/$CONTACT_ID/notes" \
   -H "Authorization: Bearer $TOKEN" \
   -H "Content-Type: application/json" \
-  -d '{"body":"Called - follow up next week."}'
+  -d '{"body":"Called - follow up next week.","interaction_type":"call","occurred_at":"2026-03-22T16:00:00+00:00"}'
 
 curl -sS "$BASE/contacts/$CONTACT_ID/notes" -H "Authorization: Bearer $TOKEN"
 ```
