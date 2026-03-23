@@ -173,4 +173,4 @@ flowchart TB
   linkStyle 0 stroke:#334155,stroke-width:2px
   linkStyle 1 stroke:#334155,stroke-width:2px
 ```
-More on Level Up x [Agentic AI](https://levelupla.io/ai-agents/).
+More on Level Up x [Agentic AI](https://levelupla.io/category/ai-agents/).
