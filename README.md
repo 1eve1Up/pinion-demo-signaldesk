@@ -122,4 +122,55 @@ This repo can carry a `pinion/` subtree for task tracking. See `pinion/AGENTS.md
 
 ## Pinion-Built
 
-This repo is built by Level Up's Pinion.
+This demo repo is being built by [Level Up](https://levelupla.io)'s Pinion.
+
+- Demo sprints: Two (and counting)
+- Human code contributions to date: Zero
+
+### About Pinion
+
+**Pinion** is a repository-native coordination engine for planning and executing software work with humans and AI agents.
+ 
+Built to be a reasoning layer between human planning and multiple code agents, it's repo-native and fast.
+
+- **Drop-in** — Lives in `pinion/` (which is NOT committed to this demo repo); no external service required.  
+- **Agent-friendly** — JSON and Markdown; agents read and transition via CLI, Skills, etc.  
+- **Human-readable** — Product, backlog, sprints, and generated views live in the repo.
+
+See Pinion in action:
+- Video: [BacklogZero&#174; `pinion plan-sprint` demo](https://youtu.be/NFP9XZs9qbU)
+- Video: [BacklogZero&#174; `pinion go` demo](https://youtu.be/vwtawusFMWk)
+- Video: [BacklogZero&#174; `pinion retro` demo](https://youtu.be/BP8yQ6TpJ_4)
+
+### Where Pinion sits in Level Up's own AI coding workflows
+
+Humans own intent and sequencing; Pinion is the shared coordination layer; coding agents execute and feed results back.
+
+```mermaid
+%%{init: {'flowchart': {'useMaxWidth': true, 'padding': 24, 'nodeSpacing': 80, 'rankSpacing': 36, 'htmlLabels': true}}}%%
+flowchart TB
+  h["<b>Human planning</b><br/><i>Backlog, sprints, product, architecture — mainly under pinion/</i>"]
+  subgraph row[" "]
+    direction LR
+    p["<b>Pinion layer</b><br/><i>Co-planning & agent coordination engine</i>"]
+    a["<b>Coding agents</b><br/><i>Pinion coordination & execution — pick ready tasks, branches, implement, merge</i>"]
+  end
+  h --> p
+  p <--> a
+
+  classDef human fill:#bfdbfe,stroke:#1d4ed8,stroke-width:2px,color:#1e3a8a
+  classDef pinion fill:#bbf7d0,stroke:#15803d,stroke-width:2px,color:#14532d
+  classDef coding fill:#e9d5ff,stroke:#7c3aed,stroke-width:2px,color:#4c1d95
+
+  class h human
+  class p pinion
+  class a coding
+
+  style h min-width:560px
+  style p min-width:560px
+  style a min-width:560px
+  style row fill:transparent,stroke-width:0px
+  linkStyle 0 stroke:#334155,stroke-width:2px
+  linkStyle 1 stroke:#334155,stroke-width:2px
+```
+More on Level Up x [Agentic AI](https://levelupla.io/ai-agents/).
