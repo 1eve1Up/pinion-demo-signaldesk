@@ -105,8 +105,8 @@ Theme: **Why could we extend the CRM model without breaking Sprint 1 clients or 
 
 ### Sprint 2 End Dashboard
 
-![Sprint 2 End Dashoard](readme-images/sprint-2-end-dashboard.png)
+![Sprint 2 End Dashoard](../readme-images/sprint-2-end-dashboard.png)
 
 ### Sprint 2 End Git Stats
 
-![Sprint 2 End Git Stats](readme-images/loc-by-commit.png)
+![Sprint 2 End Git Stats](../readme-images/loc-by-commit.png)
