@@ -1,5 +1,6 @@
 .cursor/
 pinion/
+.DS_Store
 
 # Python / SignalDesk app
 .env
